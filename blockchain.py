@@ -75,7 +75,7 @@ class Blockchain(object):
         :return: <bool> True if correct, False if not. 
         """
 
-        guess = f'{last_block}{proof}'.encode()
+        guess = f'{last_proof}{proof}'.encode()
         guess_hash = hashlib.sha256(guess).hexdigest()
         return guess_hash[:4] == "0000"
 
