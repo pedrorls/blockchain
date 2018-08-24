@@ -98,6 +98,32 @@ class Blockchain(object):
             current_index += 1
         return True
 
+    def resolve_conflicts(self):
+        """
+        This is a Consensus Algorithm, it resolves conflicts
+        by replacing our chain with the longest one in the network.
+
+        :return: <bool> Thue if the chain was replaced, False if not
+        """
+        neighbours = self.nodes
+        new_chain = None
+        #Only chains longer than the current one
+        max_length = len(self.chain)
+        for node in neighbours:
+            response = requests.get(f'http://{node}/chain')
+            if response.status_code == 200:
+                length = response.json()['length']
+                chain = response.json()['chain']
+
+                if len > max_length and self.valid_chain(chain):
+                    max_length = length
+                    new_chain = chain
+        #Replace chain if find  a longer valid one
+        if new_chain:
+            self.chain = new_chain
+            return True
+        return False
+
     @staticmethod
     def valid_proof(last_proof, proof):
         """
